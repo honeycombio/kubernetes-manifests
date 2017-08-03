@@ -1,0 +1,44 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: heapster-honeycomb
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        task: monitoring
+        k8s-app: heapster
+    spec:
+      containers:
+      - name: heapster
+        image: honeycombio/heapster-amd64:v1.3.0
+        imagePullPolicy: Always
+        command:
+        - /heapster
+        args:
+        - --source=kubernetes:https://kubernetes.default
+        - --sink=honeycomb:http://test?writekey=$(HONEYCOMB_WRITEKEY)&dataset=kubernetes-resource-metrics
+        - --sink=log
+        env:
+        - name: HONEYCOMB_WRITEKEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: honeycomb-writekey
+      - name: eventer
+        image: honeycombio/heapster-amd64:v1.3.0
+        imagePullPolicy: Always
+        command:
+        - /eventer
+        args:
+        - --source=kubernetes:https://kubernetes.default
+        - --sink=honeycomb:http://test?writekey=$(HONEYCOMB_WRITEKEY)&dataset=kubernetes-cluster-events
+        env:
+        - name: HONEYCOMB_WRITEKEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: honeycomb-writekey

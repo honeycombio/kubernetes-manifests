@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: kube-state-metrics-honeycomb
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        task: monitoring
+        k8s-app: kube-state-metrics-honeycomb
+    spec:
+      containers:
+      - name: prom2hny
+        image: honeycombio/prom2hny:head
+        imagePullPolicy: IfNotPresent
+        command:
+          - /prom2hny
+          - --dataset=kubernetes-state-metrics
+          - --url=http://kube-state-metrics.kube-system:8080/metrics
+          - --interval=30
+        env:
+        - name: HONEYCOMB_WRITEKEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: honeycomb-writekey
