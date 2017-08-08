@@ -25,6 +25,7 @@ After a few seconds, you should see the following datasets in the Honeycomb UI:
   deployment, run the query
   - breakdown: deployment
   - calculate per group: MIN(kube_deployment_status_replicas)
+
   _tip_: Under "graph settings", toggle "omit missing values" to get smoother
   graphs.
 
@@ -33,7 +34,7 @@ After a few seconds, you should see the following datasets in the Honeycomb UI:
   to see the containers using the most CPU, run the query
   - break down: container_name
   - calculate per group: MAX(cpu/usage_rate)
-  - order: MA(cpu/usage_rate) desc.
+  - order: MAX(cpu/usage_rate) desc.
 
 * `kubernetes-cluster-events`: This dataset contains events describing cluster
   state changes. It's similar to the output you'd see by running `kubectl get
@@ -50,5 +51,3 @@ After a few seconds, you should see the following datasets in the Honeycomb UI:
   _your_ applications! See the agent
   [docs](https://honeycomb.io/docs/connect/kubernetes/configuration/) for
   configuration details.
-_tip_: Under "graph settings", toggle "omit missing values" to get smoother
-graphs.
