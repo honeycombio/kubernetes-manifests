@@ -1,12 +1,20 @@
 This repository contains example manifests for deploying Honeycomb's Kubernetes
 integrations.
 
-To start collecting cluster metrics data, grab your Honeycomb write key from
+The Honeycomb [Kubernetes agent](https://github.com/honeycombio/honeycomb-kubernetes-agent) provides a flexible way to ingest logs from applications running on Kubernetes.  Honeycomb can also leverage [Heapster](https://github.com/honeycombio/heapster) and [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) to explore your cluster's state and resource use.
+
+To start collecting data, grab your Honeycomb write key from
 your [account page](https://ui.honeycomb.io/account). Then run
 ```
 kubectl create secret generic honeycomb-writekey --from-literal=key=$YOUR_WRITEKEY -n kube-system
+```
+to save your write key as a Kubernetes secret.
 
+Next, clone this repository and apply the manifests:
+
+```
 git clone https://github.com/honeycombio/kubernetes-manifests
+kubectl apply -f kubernetes-manifests/logs
 kubectl apply -f kubernetes-manifests/metrics
 ```
 
@@ -17,6 +25,8 @@ After a few seconds, you should see the following datasets in the Honeycomb UI:
   deployment, run the query
   - breakdown: deployment
   - calculate per group: MIN(kube_deployment_status_replicas)
+  _tip_: Under "graph settings", toggle "omit missing values" to get smoother
+  graphs.
 
 * `kubernetes-resource-metrics`: This dataset contains metrics describing
   system resource use by pods and containers (CPU/memory/IO/etc). For example,
@@ -34,5 +44,11 @@ After a few seconds, you should see the following datasets in the Honeycomb UI:
 
   to alert you when too many pods are being killed.
 
+* `kubernetes-logs`: This contains logs from applications running on
+  Kubernetes. Note that by default, the agent only parses logs from Kubernetes
+  system components. You'll want to adjust its configuration to parse logs from
+  _your_ applications! See the agent
+  [docs](https://honeycomb.io/docs/connect/kubernetes/configuration/) for
+  configuration details.
 _tip_: Under "graph settings", toggle "omit missing values" to get smoother
 graphs.
