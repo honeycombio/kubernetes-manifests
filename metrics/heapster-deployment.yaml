@@ -20,7 +20,7 @@ spec:
         - /heapster
         args:
         - --source=kubernetes:https://kubernetes.default
-        - --sink=honeycomb:http://test?writekey=$(HONEYCOMB_WRITEKEY)&dataset=kubernetes-resource-metrics
+        - --sink=honeycomb:?dataset=kubernetes-resource-metrics
         - --sink=log
         env:
         - name: HONEYCOMB_WRITEKEY
@@ -35,7 +35,7 @@ spec:
         - /eventer
         args:
         - --source=kubernetes:https://kubernetes.default
-        - --sink=honeycomb:http://test?writekey=$(HONEYCOMB_WRITEKEY)&dataset=kubernetes-cluster-events
+        - --sink=honeycomb:?dataset=kubernetes-cluster-events
         env:
         - name: HONEYCOMB_WRITEKEY
           valueFrom:
