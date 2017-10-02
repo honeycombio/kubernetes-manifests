@@ -14,14 +14,13 @@ spec:
     spec:
       containers:
       - name: heapster
-        image: honeycombio/heapster-amd64:v1.3.0
+        image: gcr.io/google_containers/heapster-amd64:v1.5.0-beta.0
         imagePullPolicy: Always
         command:
         - /heapster
         args:
         - --source=kubernetes:https://kubernetes.default
         - --sink=honeycomb:?dataset=kubernetes-resource-metrics
-        - --sink=log
         env:
         - name: HONEYCOMB_WRITEKEY
           valueFrom:
@@ -29,7 +28,7 @@ spec:
               key: key
               name: honeycomb-writekey
       - name: eventer
-        image: honeycombio/heapster-amd64:v1.3.0
+        image: gcr.io/google_containers/heapster-amd64:v1.5.0-beta.0
         imagePullPolicy: Always
         command:
         - /eventer
