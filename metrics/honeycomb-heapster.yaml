@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: heapster
-        image: gcr.io/google_containers/heapster-amd64:v1.5.0-beta.0
+        image: gcr.io/google_containers/heapster-amd64:v1.5.0
         imagePullPolicy: Always
         command:
         - /heapster
@@ -28,7 +28,7 @@ spec:
               key: key
               name: honeycomb-writekey
       - name: eventer
-        image: gcr.io/google_containers/heapster-amd64:v1.5.0-beta.0
+        image: gcr.io/google_containers/heapster-amd64:v1.5.0
         imagePullPolicy: Always
         command:
         - /eventer
