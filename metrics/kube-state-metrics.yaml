@@ -1,5 +1,6 @@
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+# kubernetes versions before 1.8.0 should use rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: kube-state-metrics
@@ -12,6 +13,10 @@ rules:
   - resourcequotas
   - replicationcontrollers
   - limitranges
+  - persistentvolumeclaims
+  - persistentvolumes
+  - namespaces
+  - endpoints
   verbs: ["list", "watch"]
 - apiGroups: ["extensions"]
   resources:
@@ -19,9 +24,22 @@ rules:
   - deployments
   - replicasets
   verbs: ["list", "watch"]
-
+- apiGroups: ["apps"]
+  resources:
+  - statefulsets
+  verbs: ["list", "watch"]
+- apiGroups: ["batch"]
+  resources:
+  - cronjobs
+  - jobs
+  verbs: ["list", "watch"]
+- apiGroups: ["autoscaling"]
+  resources:
+  - horizontalpodautoscalers
+  verbs: ["list", "watch"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+# kubernetes versions before 1.8.0 should use rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: kube-state-metrics-for-honeycomb
@@ -33,7 +51,38 @@ subjects:
 - kind: ServiceAccount
   name: kube-state-metrics
   namespace: kube-system
-
+---
+# kubernetes versions before 1.8.0 should use rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: kube-system
+  name: kube-state-metrics-resizer
+rules:
+- apiGroups: [""]
+  resources:
+  - pods
+  verbs: ["get"]
+- apiGroups: ["extensions"]
+  resources:
+  - deployments
+  resourceNames: ["kube-state-metrics"]
+  verbs: ["get", "update"]
+---
+# kubernetes versions before 1.8.0 should use rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kube-state-metrics
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kube-state-metrics-resizer
+subjects:
+- kind: ServiceAccount
+  name: kube-state-metrics
+  namespace: kube-system
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -42,13 +91,18 @@ metadata:
   namespace: kube-system
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
+# Kubernetes versions after 1.9.0 should use apps/v1
+# Kubernetes versions before 1.8.0 should use apps/v1beta1 or extensions/v1beta1
 kind: Deployment
 metadata:
   name: kube-state-metrics
   namespace: kube-system
 spec:
-  replicas: 2
+  selector:
+    matchLabels:
+      k8s-app: kube-state-metrics
+  replicas: 1
   template:
     metadata:
       labels:
@@ -57,7 +111,7 @@ spec:
       serviceAccountName: kube-state-metrics
       containers:
       - name: kube-state-metrics
-        image: gcr.io/google_containers/kube-state-metrics:v1.0.1
+        image: k8s.gcr.io/kube-state-metrics:v1.2.0
         ports:
         - name: http-metrics
           containerPort: 8080
@@ -67,14 +121,33 @@ spec:
             port: 8080
           initialDelaySeconds: 5
           timeoutSeconds: 5
+      - name: addon-resizer
+        image: k8s.gcr.io/addon-resizer:1.7
         resources:
-          requests:
-            memory: 30Mi
-            cpu: 100m
           limits:
-            memory: 50Mi
-            cpu: 200m
-
+            cpu: 100m
+            memory: 30Mi
+          requests:
+            cpu: 100m
+            memory: 30Mi
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        command:
+          - /pod_nanny
+          - --container=kube-state-metrics
+          - --cpu=100m
+          - --extra-cpu=1m
+          - --memory=100Mi
+          - --extra-memory=2Mi
+          - --threshold=5
+          - --deployment=kube-state-metrics
 ---
 apiVersion: v1
 kind: Service
