@@ -26,7 +26,7 @@ metadata:
   namespace: kube-system
 rules:
   - apiGroups:
-    - "*"
+    - ""
     resources:
     - pods
     verbs:
@@ -42,11 +42,30 @@ metadata:
   namespace: kube-system
 data:
   config.yaml: |-
+    # By default, submit logs from interesting system pods such as the
+    # kube API server
     watchers:
       - dataset: kubernetes-logs
-        labelSelector: ""
+        labelSelector: "k8s-app=kube-apiserver"
+        namespace: kube-system
         parser: glog
-    verbosity: debug
+      - dataset: kubernetes-logs
+        labelSelector: "k8s-app=kube-scheduler"
+        namespace: kube-system
+        parser: glog
+      - dataset: kubernetes-logs
+        labelSelector: "k8s-app=kube-controller-manager"
+        namespace: kube-system
+        parser: glog
+      - dataset: kubernetes-logs
+        labelSelector: "k8s-app=kube-proxy"
+        namespace: kube-system
+        parser: glog
+      - dataset: kubernetes-logs
+        labelSelector: "k8s-app=dns-controller"
+        namespace: kube-system
+        parser: glog
+    verbosity: info
 
 # Daemonset
 ---
