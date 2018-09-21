@@ -123,6 +123,12 @@ spec:
         - mountPath: "/var/lib/docker/containers"
           name: varlibdockercontainers
           readOnly: true
+        # In minikube, /var/lib/docker is symlinked to # /mnt/sda1/var/lib/docker,
+        # so mount that path as well. This mount can be removed in a production
+        # deployment.
+        - mountPath: "/mnt/sda1/var/lib/docker/containers"
+          name: minikube-varlibdockercontainers
+          readOnly: true
       serviceAccountName: honeycomb-serviceaccount
       terminationGracePeriodSeconds: 30
       volumes:
@@ -138,3 +144,6 @@ spec:
       - hostPath:
           path: "/var/lib/docker/containers"
         name: varlibdockercontainers
+      - hostPath:
+          path: "/mnt/sda1/var/lib/docker/containers"
+        name: minikube-varlibdockercontainers
