@@ -6,7 +6,7 @@ The Honeycomb [Kubernetes agent](https://github.com/honeycombio/honeycomb-kubern
 To start collecting data, grab your Honeycomb write key from
 your [account page](https://ui.honeycomb.io/account). Then run
 ```
-kubectl create secret generic honeycomb-writekey --from-literal=key=$YOUR_WRITEKEY -n kube-system
+kubectl create secret generic honeycomb-writekey --from-literal=key=$YOUR_WRITEKEY -n default
 ```
 to save your write key as a Kubernetes secret.
 
@@ -14,7 +14,41 @@ Next, clone this repository and apply the manifests:
 
 ```
 git clone https://github.com/honeycombio/kubernetes-manifests
-kubectl apply -f kubernetes-manifests/logs
+```
+
+## Kubernetes Logs Agent
+
+### For a generic K8S cluster:
+```
+kubectl apply -f kubernetes-manifests/logs/quickstart.yaml
+```
+
+### Google Kubernetes Engine
+
+You might need to grant your the role `cluster-admin` before installing:
+
+```
+kubectl create clusterrolebinding your-user-admin-binding --clusterrole=cluster-admin --user=your.user.email@example.com
+```
+
+Then install the agent:
+
+```
+kubectl apply -f kubernetes-manifests/logs/quickstart-gke.yaml
+```
+### Microsot AKS
+```
+kubectl apply -f kubernetes-manifests/logs/quickstart-aks.yaml
+```
+
+### Amazon EKS
+```
+kubectl apply -f kubernetes-manifests/logs/quickstart-aws-eks.yaml
+```
+
+## Metrics Agent
+
+```
 kubectl apply -f kubernetes-manifests/metrics
 ```
 
