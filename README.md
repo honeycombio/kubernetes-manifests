@@ -6,7 +6,7 @@ The Honeycomb [Kubernetes agent](https://github.com/honeycombio/honeycomb-kubern
 To start collecting data, grab your Honeycomb write key from
 your [account page](https://ui.honeycomb.io/account). Then run
 ```
-kubectl create secret generic honeycomb-writekey --from-literal=key=$YOUR_WRITEKEY -n kube-system
+kubectl create secret generic honeycomb-writekey --from-literal=key=$YOUR_WRITEKEY -n default
 ```
 to save your write key as a Kubernetes secret.
 
