@@ -66,6 +66,9 @@ data:
         namespace: kube-system
         parser: glog
     verbosity: info
+    # splitLogging directs trace, debug, info, and warn log levels to stdout
+    # rather than stderr.
+    splitLogging: false
 
 # Daemonset
 ---
