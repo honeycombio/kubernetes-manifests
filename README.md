@@ -73,7 +73,7 @@ After a few seconds, you should see the following datasets in the Honeycomb UI:
 * `kubernetes-cluster-events`: This dataset contains events describing cluster
   state changes. It's similar to the output you'd see by running `kubectl get
   events --watch`. For example, you might use this dataset to set a
-  [trigger](https://honeycomb.io/docs/guides/triggers/) on the query
+  [trigger](https://docs.honeycomb.io/api/triggers/) on the query
   - calculate: COUNT
   - filter: kind = Pod, reason = Killing
 
@@ -83,5 +83,5 @@ After a few seconds, you should see the following datasets in the Honeycomb UI:
   Kubernetes. Note that by default, the agent only parses logs from Kubernetes
   system components. You'll want to adjust its configuration to parse logs from
   _your_ applications! See the agent
-  [docs](https://honeycomb.io/docs/connect/kubernetes/configuration/) for
+  [docs](https://docs.honeycomb.io/getting-data-in/integrations/kubernetes/configuration/) for
   configuration details.
