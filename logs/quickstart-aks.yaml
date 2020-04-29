@@ -72,26 +72,25 @@ data:
 
 # Daemonset
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    k8s-app: honeycomb-agent
-    kubernetes.io/cluster-service: 'true'
-    version: v1.1
-  name: honeycomb-agent-v1.1
+    app: honeycomb-agent
+  name: honeycomb-agent
   namespace: default
 spec:
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: honeycomb-agent
   template:
     metadata:
       labels:
-        k8s-app: honeycomb-agent
-        kubernetes.io/cluster-service: 'true'
-        version: v1.1
+        app: honeycomb-agent
     spec:
       tolerations:
         - operator: Exists
