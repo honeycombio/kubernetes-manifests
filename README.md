@@ -54,15 +54,6 @@ kubectl apply -f kubernetes-manifests/metrics
 
 After a few seconds, you should see the following datasets in the Honeycomb UI:
 
-* `kubernetes-state-metrics`: This contains metrics describing the state of
-  Kubernetes objects. For example, to see the number of running replicas per
-  deployment, run the query
-  - breakdown: deployment
-  - calculate per group: MIN(kube_deployment_status_replicas)
-
-  _tip_: Under "graph settings", toggle "omit missing values" to get smoother
-  graphs.
-
 * `kubernetes-resource-metrics`: This dataset contains metrics describing
   system resource use by pods and containers (CPU/memory/IO/etc). For example,
   to see the containers using the most CPU, run the query
