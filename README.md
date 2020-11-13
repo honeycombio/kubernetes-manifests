@@ -1,3 +1,13 @@
+# **This project is no longer under development!**
+This project is not actively maintained and you should not use it. New issues and pull requests will likely be ignored. 
+Refer to [documentation](https://docs.honeycomb.io/getting-data-in/integrations/kubernetes/) for installation options of
+the [Honeycomb Kubernetes Agent](https://github.com/honeycombio/honeycomb-kubernetes-agent).
+
+---
+
+
+
+
 This repository contains example manifests for deploying Honeycomb's Kubernetes
 integrations.
 
